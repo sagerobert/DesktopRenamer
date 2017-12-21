@@ -1,7 +1,7 @@
 # DesktopRenamer    
 <br />
 
-Very simple windows console application which scans all files in the directory it is started from and moves the files in folders corresponding to their starting literal.
+Very simple windows console application which scans all files in the directory it is started from and moves them to a folder corresponding to their starting literal.
 For example, if a file 'test.txt' is found, the program looks for a folder named 'T' and moves the file to that folder.
 If the folder doesn't exist, it will be created.
 
