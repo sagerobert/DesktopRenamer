@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Avnet" )]
 [assembly: AssemblyProduct( "DesktopRenamer" )]
-[assembly: AssemblyCopyright( "Copyright © Avnet 2017" )]
+[assembly: AssemblyCopyright( "Copyright © sagerobert 2017" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
