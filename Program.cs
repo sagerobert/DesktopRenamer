@@ -7,7 +7,7 @@ namespace DesktopRenamer
 {
 	class Program
 	{
-		readonly static Version version = new Version( 1, 0 );
+		readonly static Version version = new Version( 1, 1 );
 		readonly static string path = AppDomain.CurrentDomain.BaseDirectory;
 		public readonly static string exe = AppDomain.CurrentDomain.FriendlyName;
 		readonly static string syntax = string.Format( "{0}{0}{4} [.] [(--dry-run|-dr)]{0}{0}Version {5}{0}{1}{0}{2}{0}{3}{0}{0}",
@@ -70,7 +70,7 @@ namespace DesktopRenamer
 					{
 						Directory.CreateDirectory( targetPath );
 					}
-					Console.WriteLine( string.Format( "Created directory '{0}'", c ) );
+					Console.WriteLine( $"Created directory '{c}'" );
 				}
 
 				targetFile = Path.Combine( targetPath, Path.GetFileName( file ) );
@@ -81,23 +81,23 @@ namespace DesktopRenamer
 					{
 						File.Move( file, targetFile );
 					}
-					Console.WriteLine( string.Format( "{0} => {1}", Path.GetFileName( file ), Path.Combine( c, Path.GetFileName( file ) ) ) );
+					Console.WriteLine( $"{Path.GetFileName( file )} => {Path.Combine( c, Path.GetFileName( file ) )}" );
 				}
 				else
 				{
 					File.Delete( file );
-					Console.WriteLine( string.Format( "File '{0}\\{1}' already exists in target, deleted.", c, Path.GetFileName( file ) ) );
+					Console.WriteLine( $"File '{c}\\{Path.GetFileName( file )}' already exists in target, deleted." );
 				}
 
 				targetPath = targetFile = string.Empty;
 			}
 
 			stopwatch.Stop();
-			Console.WriteLine( "{0}{0}Processed {1} files in {2} seconds.{0}{0}Press any key to exit{0}",
+			Console.WriteLine( "{0}{0}Processed {1} files in {2} seconds.{0}{0}",
 								Environment.NewLine,
 								files.Count,
 								stopwatch.ElapsedMilliseconds/1000);
-			Console.ReadKey();
+			//Console.ReadKey();
 		}
 
 		/*
