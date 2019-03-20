@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "DesktopRenamer" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Avnet" )]
+[assembly: AssemblyCompany( "sager.io" )]
 [assembly: AssemblyProduct( "DesktopRenamer" )]
-[assembly: AssemblyCopyright( "Copyright © sagerobert 2017" )]
+[assembly: AssemblyCopyright( "© sager.io 2017-2019" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
