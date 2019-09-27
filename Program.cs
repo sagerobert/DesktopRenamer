@@ -5,7 +5,7 @@ using System.IO;
 
 namespace DesktopRenamer
 {
-	class Program
+	static class Program
 	{
 		readonly static Version version = new Version( 1, 1 );
 		readonly static string path = AppDomain.CurrentDomain.BaseDirectory;
@@ -20,122 +20,123 @@ namespace DesktopRenamer
 
 		static void Main( string[] args )
 		{
-			if ( args == null || !( args.Length > 0 ) )
+			if ( args == null || args.Length < 1 )
 			{
 				Console.WriteLine( syntax );
 				Console.ReadKey();
 				Environment.Exit( 0 );
 			}
-
-			if ( args[ 0 ] != "." )
+			else
 			{
-				Console.WriteLine( string.Format( "{0}{0}Annotator '.' is missing!{0}{0}", Environment.NewLine ) );
-				Console.ReadKey();
-				Environment.Exit( 0 );
-			}
-
-			Stopwatch stopwatch = new Stopwatch();
-			stopwatch.Start();
-
-			List<string> files = GetFiles();
-
-			if ( !( files.Count > 0 ) )
-			{
-				Console.WriteLine( "No files found. Chickening out..." );
-				Console.ReadKey();
-				Environment.Exit( 0 );
-			}
-
-			Statistic( files );
-
-			bool simulate = false;
-
-			if ( args.Length > 1 && ( args[ 1 ].ToUpper().Equals( "-D" ) || args[ 1 ].ToUpper().Equals( "--DRY-RUN" ) ) )
-			{
-				simulate = true;
-			}
-
-			string targetPath, targetFile;
-			targetPath = targetFile = string.Empty;
-			WriteNewLine( 2 );
-
-			foreach ( string file in files )
-			{
-				string c = Path.GetFileNameWithoutExtension( file )[ 0 ].ToString().ToUpper();
-				targetPath = Path.Combine( path, c );
-
-				if ( !Directory.Exists( targetPath ) )
+				if ( args[0] != "." )
 				{
-					if ( !simulate )
+					Console.WriteLine( string.Format( "{0}{0}Annotator '.' is missing!{0}{0}", Environment.NewLine ) );
+					Console.ReadKey();
+					Environment.Exit( 0 );
+				}
+
+				Stopwatch stopwatch = new Stopwatch();
+				stopwatch.Start();
+
+				List<string> files = GetFiles();
+
+				if ( files.Count < 1 )
+				{
+					Console.WriteLine( "No files found. Chickening out..." );
+					Console.ReadKey();
+					Environment.Exit( 0 );
+				}
+
+				Statistic( files );
+
+				bool simulate = false;
+
+				if ( args.Length > 1 && ( args[ 1 ].ToUpper().Equals( "-D" ) || args[ 1 ].ToUpper().Equals( "--DRY-RUN" ) ) )
+				{
+					simulate = true;
+				}
+
+				string targetPath, targetFile;
+				WriteNewLine( 2 );
+
+				foreach ( string file in files )
+				{
+					string c = Path.GetFileNameWithoutExtension( file )[ 0 ].ToString().ToUpper();
+					targetPath = Path.Combine( path, c );
+
+					if ( !Directory.Exists( targetPath ) )
 					{
-						Directory.CreateDirectory( targetPath );
+						if ( !simulate )
+						{
+							Directory.CreateDirectory( targetPath );
+						}
+						Console.WriteLine( $"Created directory '{c}'" );
 					}
-					Console.WriteLine( $"Created directory '{c}'" );
-				}
 
-				targetFile = Path.Combine( targetPath, Path.GetFileName( file ) );
+					targetFile = Path.Combine( targetPath, Path.GetFileName( file ) );
 
-				if ( !File.Exists( targetFile ) )
-				{
-					if ( !simulate )
+					if ( !File.Exists( targetFile ) )
 					{
-						File.Move( file, targetFile );
+						if ( !simulate )
+						{
+							File.Move( file, targetFile );
+						}
+						Console.WriteLine( $"{Path.GetFileName( file )} => {Path.Combine( c, Path.GetFileName( file ) )}" );
 					}
-					Console.WriteLine( $"{Path.GetFileName( file )} => {Path.Combine( c, Path.GetFileName( file ) )}" );
-				}
-				else
-				{
-					File.Delete( file );
-					Console.WriteLine( $"File '{c}\\{Path.GetFileName( file )}' already exists in target, deleted." );
+					else
+					{
+						File.Delete( file );
+						Console.WriteLine( $"File '{c}\\{Path.GetFileName( file )}' already exists in target, deleted." );
+					}
 				}
 
-				targetPath = targetFile = string.Empty;
+				stopwatch.Stop();
+				Console.WriteLine( "{0}{0}Processed {1} files in {2} seconds.{0}{0}",
+									Environment.NewLine,
+									files.Count,
+									stopwatch.ElapsedMilliseconds/1000);
+				// Console.ReadKey();
 			}
-
-			stopwatch.Stop();
-			Console.WriteLine( "{0}{0}Processed {1} files in {2} seconds.{0}{0}",
-								Environment.NewLine,
-								files.Count,
-								stopwatch.ElapsedMilliseconds/1000);
-			//Console.ReadKey();
 		}
 
-		/*
-		static void ProgressBar( int progress, int total )
-		{
-			//draw empty progress bar
-			Console.CursorLeft = 0;
-			Console.Write( "[" ); //start
-			Console.CursorLeft = 32;
-			Console.Write( "]" ); //end
-			Console.CursorLeft = 1;
-			float onechunk = 30.0f / total;
+#pragma warning disable S125 // Sections of code should not be commented out
+														/*
+																static void ProgressBar( int progress, int total )
+																{
+																	//draw empty progress bar
+																	Console.CursorLeft = 0;
+																	Console.Write( "[" ); //start
+																	Console.CursorLeft = 32;
+																	Console.Write( "]" ); //end
+																	Console.CursorLeft = 1;
+																	float onechunk = 30.0f / total;
 
-			//draw filled part
-			int position = 1;
-			for ( int i = 0; i < onechunk * progress; i++ )
-			{
-				Console.BackgroundColor = ConsoleColor.Gray;
-				Console.CursorLeft = position++;
-				Console.Write( " " );
-			}
+																	//draw filled part
+																	int position = 1;
+																	for ( int i = 0; i < onechunk * progress; i++ )
+																	{
+																		Console.BackgroundColor = ConsoleColor.Gray;
+																		Console.CursorLeft = position++;
+																		Console.Write( " " );
+																	}
 
-			//draw unfilled part
-			for ( int i = position; i <= 31; i++ )
-			{
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.CursorLeft = position++;
-				Console.Write( " " );
-			}
+																	//draw unfilled part
+																	for ( int i = position; i <= 31; i++ )
+																	{
+																		Console.BackgroundColor = ConsoleColor.Black;
+																		Console.CursorLeft = position++;
+																		Console.Write( " " );
+																	}
 
-			//draw totals
-			Console.CursorLeft = 35;
-			Console.BackgroundColor = ConsoleColor.Black;
-			Console.Write( progress.ToString() + " of " + total.ToString() + "    " ); //blanks at the end remove any excess
-		}
-		*/
+																	//draw totals
+																	Console.CursorLeft = 35;
+																	Console.BackgroundColor = ConsoleColor.Black;
+																	Console.Write( progress.ToString() + " of " + total.ToString() + "    " ); //blanks at the end remove any excess
+																}
+																*/
 
-		static void Statistic( List<string> files )
+		static void Statistic( List<string> files)
+#pragma warning restore S125 // Sections of code should not be commented out
 		{
 			Dictionary<char, int> map = new Dictionary<char, int>();
 
@@ -165,7 +166,7 @@ namespace DesktopRenamer
 		{
 			string[] array = Directory.GetFiles( path, "*", SearchOption.TopDirectoryOnly );
 			List<string> files = new List<string>( array );
-			return files.Clean();
+			return files.clean();
 		}
 
 		static void WriteNewLine( int times )
